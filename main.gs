@@ -2,6 +2,7 @@ const ssCache = {
   getCache: function(id) {
     let cacheSht = this.openCacheSht();
     let rowLen   = cacheSht.getLastRow();
+    if(rowLen === 0) return null;
     let caches   = cacheSht.getRange(1, 1, rowLen, 2).getValues();
     let row      = this.getRowFromArray(caches, id);
     if(row === null) return null;
@@ -10,9 +11,14 @@ const ssCache = {
   setCache: function(id, value) {
     let cacheSht = this.openCacheSht();
     let rowLen   = cacheSht.getLastRow();
-    let caches   = cacheSht.getRange(1, 1, rowLen, 2).getValues();
-    let row      = this.getRowFromArray(caches, id);
-    if(row === null) row = rowLen;
+    let caches, row;
+    if(rowLen > 0){
+      caches   = cacheSht.getRange(1, 1, rowLen, 2).getValues();
+      row      = this.getRowFromArray(caches, id);
+      if(row === null) row = rowLen;
+    }else{
+      row = 0;
+    }
     cacheSht.getRange(row+1, 1, 1, 2).setValues([[id,value]]);
     return 0;
   },
@@ -39,5 +45,5 @@ const ssCache = {
 
 function test(){
   Logger.log(ssCache.setCache("test", "nonnon"))
-  Logger.log(ssCache.getCache("nu"))
+  Logger.log(ssCache.getCache("test"))
 }
